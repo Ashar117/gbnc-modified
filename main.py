@@ -49,6 +49,14 @@ def main():
     parser.add_argument('--K', type=int, default=10)
     parser.add_argument('--alpha', type=float, default=0.1)
     parser.add_argument('--heads', type=int, default=8)
+    # new change
+    parser.add_argument(
+    '--score_method',
+    type=str,
+    default='degree',
+    help='Options: degree, degree_centrality, pagerank, closeness, betweenness, eigenvector'
+)
+
 
     args = parser.parse_args()
     path = "params/"

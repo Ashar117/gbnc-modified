@@ -48,33 +48,46 @@ def gb_division(data, args):
     labels = np.expand_dims(labels, axis=0)
     labels = np.reshape(labels, (nx.number_of_nodes(graph), 1))
 
+    if args.score_method == 'degree':
+        total_score_dict_old = dict(graph.degree())
+    elif args.score_method == 'degree_centrality':
+        total_score_dict_old = nx.degree_centrality(graph)
+    elif args.score_method == 'pagerank':
+        total_score_dict_old = nx.pagerank(graph)
+    elif args.score_method == 'closeness':
+        total_score_dict_old = nx.closeness_centrality(graph)
+    elif args.score_method == 'betweenness':
+        total_score_dict_old = nx.betweenness_centrality(graph)
+    elif args.score_method == 'eigenvector':
+        total_score_dict_old = nx.eigenvector_centrality(graph, max_iter=1000)
+    else:
+        raise ValueError(f"Unsupported score method: {args.score_method}")
 
-    total_degree_dict_old = dict(graph.degree())
-    total_degree_dict = {}
-    id = 0
-    for key, value in total_degree_dict_old.items():
-        total_degree_dict[id] = value
-        id += 1
+    total_score_dict = {}
+    new_id = 0
+    for key, value in total_score_dict_old.items():
+        total_score_dict[new_id] = value
+        new_id += 1
 
     id_dict = {}
     id_dict_oldtonew = {}
-    for new, old in enumerate(total_degree_dict_old):
+    for new, old in enumerate(total_score_dict_old):
         id_dict[new] = old
         id_dict_oldtonew[old] = new
 
     indices = []
-    for index in total_degree_dict_old:
+    for index in total_score_dict_old:
         indices.append(index)
     indices = np.expand_dims(indices, axis=0)
     indices = np.reshape(indices, (nx.number_of_nodes(graph), 1))
     data = np.concatenate((indices, attributes, labels), axis=1)
     data = add_id(data)
 
-    C.append([data, total_degree_dict])
+    C.append([data, total_score_dict])
 
 
     # coarse division of granules
-    new_C = initial_splite(C, graph, id_dict, id_dict_oldtonew, labels, total_degree_dict)
+    new_C = initial_splite(C, graph, id_dict, id_dict_oldtonew, labels, total_score_dict)
 
 
     target = 1
@@ -92,10 +105,10 @@ def gb_division(data, args):
 
 
     #binary division of granules
-    new_C = split_ball_purity(graph, id_dict, new_C, total_degree_dict, total_balls_num)
+    new_C = split_ball_purity(graph, id_dict, new_C, total_score_dict, total_balls_num)
 
     if len(new_C) < total_balls_num:
-        new_C = split_ball_further(graph, id_dict, new_C, total_degree_dict, total_balls_num)
+        new_C = split_ball_further(graph, id_dict, new_C, total_score_dict, total_balls_num)
 
     new_C = purification(new_C)
 

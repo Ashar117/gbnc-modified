@@ -4,9 +4,9 @@ from tools.find_major_num import find_major_num
 import networkx as nx
 
 
-def split_2_co(graph, id_dict, Ci, index, total_degree_dict):
+def split_2_co(graph, id_dict, Ci, index, total_score_dict):
     data = Ci[0]
-    degree_dict = Ci[1]
+    score_dict = Ci[1]
     ball_1 = []
     ball_2 = []
     subnodes = []
@@ -16,7 +16,7 @@ def split_2_co(graph, id_dict, Ci, index, total_degree_dict):
     Distance_1 = nx.single_source_shortest_path_length(subgraph, id_dict[index[0]])
     Distance_2 = nx.single_source_shortest_path_length(subgraph, id_dict[index[1]])
 
-    for new_id in degree_dict:
+    for new_id in score_dict:
         if Distance_1[id_dict[new_id]] <= Distance_2[id_dict[new_id]]:
             ball_1.append(new_id)
         else:
@@ -34,12 +34,12 @@ def split_2_co(graph, id_dict, Ci, index, total_degree_dict):
         for j in data:
             if j[-1] == i:
                 data2.append(j)
-    d1 = {}
-    d2 = {}
+    score_dict_1 = {}
+    score_dict_2 = {}
     for i in range(len(ball_1)):
-        d1.update({ball_1[i]: total_degree_dict[ball_1[i]]})
+        score_dict_1.update({ball_1[i]: total_score_dict[ball_1[i]]})
     for i in range(len(ball_2)):
-        d2.update({ball_2[i]: total_degree_dict[ball_2[i]]})
+        score_dict_2.update({ball_2[i]: total_score_dict[ball_2[i]]})
     major_label1 = find_major(data1)
     major_label_num1, num_len1 = find_major_num(data1, major_label1)
     major_label2 = find_major(data2)
@@ -47,9 +47,9 @@ def split_2_co(graph, id_dict, Ci, index, total_degree_dict):
     if num_len1 == 0:
         C1 = []
     else:
-        C1 = [data1, d1, float(major_label_num1/num_len1)]
+        C1 = [data1, score_dict_1, float(major_label_num1/num_len1)]
     if num_len2 == 0:
         C2 = []
     else:
-        C2 = [data2, d2, float(major_label_num2/num_len2)]
+        C2 = [data2, score_dict_2, float(major_label_num2/num_len2)]
     return C1, C2
