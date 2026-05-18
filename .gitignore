@@ -4,4 +4,9 @@ tools/__pycache__/
 .venv/
 venv/
 .env
-.ipynb_checkpoints/
+.ipynb_checkpoints/params/
+dataset/citeseer/
+dataset/cs/
+dataset/physics/
+dataset/pubmed/
+logs_v2/
