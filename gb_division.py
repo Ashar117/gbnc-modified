@@ -105,10 +105,10 @@ def gb_division(data, args):
 
 
     #binary division of granules
-    new_C = split_ball_purity(graph, id_dict, new_C, total_score_dict, total_balls_num)
+    new_C = split_ball_purity(graph, id_dict, new_C, total_score_dict, total_balls_num, args.purity_threshold)
 
     if len(new_C) < total_balls_num:
-        new_C = split_ball_further(graph, id_dict, new_C, total_score_dict, total_balls_num)
+        new_C = split_ball_further(graph, id_dict, new_C, total_score_dict, total_balls_num, args.purity_threshold)
 
     new_C = purification(new_C)
 

@@ -50,12 +50,22 @@ def main():
     parser.add_argument('--alpha', type=float, default=0.1)
     parser.add_argument('--heads', type=int, default=8)
     # new change
+    # different scoring methods for node selection in ball splitting
     parser.add_argument(
-    '--score_method',
-    type=str,
-    default='degree',
-    help='Options: degree, degree_centrality, pagerank, closeness, betweenness, eigenvector'
-)
+        '--score_method',
+        type=str,
+        default='degree',
+        help='Options: degree, degree_centrality, pagerank, closeness, betweenness, eigenvector'
+    )
+    # new change
+    # multiple purity thresholds for ball splitting
+    parser.add_argument(
+        '--purity_threshold',
+        type=float,
+        default=1.0,
+        help='Purity threshold for ball splitting (0.0-1.0). Lower values allow more splitting.'
+    )
+
 
 
     args = parser.parse_args()
@@ -78,7 +88,7 @@ def main():
     new_data = gb_division(fun_data, args)
 
     data = data.to(device)
-    args.num_classes = len(set(np.array(data.y)))
+    args.num_classes = len(set(np.array(data.y.cpu())))
     args.gb_labels = new_data['gb_labels']
     features = torch.from_numpy(new_data['gb_features'])
     args.num_features = len(features[0])
